@@ -10,12 +10,12 @@ const translations = {
       about: "Tentang",
       skills: "Keahlian",
       experience: "Pengalaman",
-      projects: "Proyek",
+      projects: "Portofolio",
       workexperience: "Pengalaman Kerja",
       contact: "Kontak",
     },
     // Roles
-    roles: ["Web Developer", "UI/UX Designer", "Mobile Developer"],
+    roles: ["Web Developer", "UI/UX Designer", "Mobile Developer", "Data Scientist"],
     // Home section
     home: {
       viewWork: "Lihat Karya Saya",
@@ -55,7 +55,7 @@ const translations = {
     },
     // Projects section
     projects: {
-      title: "Proyek",
+      title: "Portofolio",
       viewMore: "Lihat Lebih Banyak",
       viewLess: "Lihat Lebih Sedikit",
       liveDemo: "Demo Live",
@@ -96,6 +96,16 @@ const translations = {
           title: "Soulmatch",
           description:
             "Aplikasi matchmaking yang menyenangkan yang menghitung kompatibilitas cinta menggunakan nama, tanggal lahir, dan tanda zodiak — dirancang untuk tujuan hiburan.",
+        },
+        {
+          title: "Cars vs Tanks Image Classification",
+          description:
+            "Model machine learning yang dibangun dengan Python di Google Colab untuk klasifikasi gambar menggunakan teknik deep learning untuk membedakan mobil dan tank.",
+        },
+        {
+          title: "Fruits Multiclass Image Classification",
+          description:
+            "Model machine learning canggih dikembangkan dengan Python di Google Colab untuk klasifikasi multiclass buah menggunakan neural networks dengan akurasi tinggi.",
         },
       ],
     },
@@ -154,7 +164,7 @@ const translations = {
       about: "About",
       skills: "Skills",
       experience: "Experience",
-      projects: "Projects",
+      projects: "Portfolio",
       workexperience: "Work Experience",
       contact: "Contact",
     },
@@ -199,7 +209,7 @@ const translations = {
     },
     // Projects section
     projects: {
-      title: "Projects",
+      title: "Portfolio",
       viewMore: "View More",
       viewLess: "View Less",
       liveDemo: "Live Demo",
@@ -240,6 +250,16 @@ const translations = {
           title: "Soulmatch",
           description:
             "Fun matchmaking app that calculates love compatibility using names, birthdates, and zodiac signs — designed for entertainment purposes.",
+        },
+        {
+          title: "Cars vs Tanks Image Classification",
+          description:
+            "Machine learning model built with Python in Google Colab for image classification using deep learning techniques to distinguish between cars and tanks.",
+        },
+        {
+          title: "Fruits Multiclass Image Classification",
+          description:
+            "Advanced machine learning model developed with Python in Google Colab for multiclass fruit classification using neural networks with high accuracy.",
         },
       ],
     },
@@ -296,7 +316,7 @@ const translations = {
 const Portfolio = () => {
   // State management
   const [darkMode, setDarkMode] = createSignal(true);
-  const [language, setLanguage] = createSignal("id");
+  const [language, setLanguage] = createSignal("en");
   const [activeSection, setActiveSection] = createSignal("home");
   const [isMenuOpen, setIsMenuOpen] = createSignal(false);
   const [currentRole, setCurrentRole] = createSignal(0);
@@ -312,12 +332,13 @@ const Portfolio = () => {
   const [isSending, setIsSending] = createSignal(false);
   const [showPopup, setShowPopup] = createSignal(false);
   const [popupMessage, setPopupMessage] = createSignal("");
+  const [activeSkill, setActiveSkill] = createSignal(0);
 
   // Helper function for translations
   const t = (key: string) => {
     const lang = language();
     const keys = key.split(".");
-    let value: any = translations[lang];
+    let value: any = translations[lang as keyof typeof translations];
     for (const k of keys) {
       value = value[k];
     }
@@ -345,7 +366,7 @@ const Portfolio = () => {
   };
 
   // Smooth scroll to section
-  const scrollToSection = (sectionId) => {
+  const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
@@ -383,7 +404,7 @@ const Portfolio = () => {
           setDisplayedText(text.slice(0, index));
           index--;
         } else {
-          setCurrentRole((prev) => (prev + 1) % roles().length);
+          setCurrentRole((prev: number) => (prev + 1) % roles().length);
           setDisplayedText("");
           setIsTyping(true);
           index = 0;
@@ -402,6 +423,15 @@ const Portfolio = () => {
       }, 2000);
       onCleanup(() => clearTimeout(timer));
     }
+  });
+
+  // Skills auto-hover animation
+  createEffect(() => {
+    const interval = setInterval(() => {
+      setActiveSkill((prev) => (prev + 1) % skills.length);
+    }, 700);
+
+    onCleanup(() => clearInterval(interval));
   });
 
   // Update single star position and initialize EmailJS
@@ -444,7 +474,7 @@ const Portfolio = () => {
   });
 
   // Fungsi untuk mengirim email
-  const sendEmail = (e) => {
+  const sendEmail = (e: Event) => {
     e.preventDefault();
     setFormStatus("");
 
@@ -484,7 +514,7 @@ const Portfolio = () => {
           setEmail("");
           setMessage("");
         },
-        (error) => {
+        (error: any) => {
           setFormStatus(formText().errorPrefix + error.text);
         }
       )
@@ -501,12 +531,16 @@ const Portfolio = () => {
     { name: "Tailwind CSS", level: 75, color: "bg-teal-500" },
     { name: "Kotlin", level: 65, color: "bg-purple-600" },
     { name: "C#", level: 55, color: "bg-green-600" },
+    { name: "ViteJS", level: 70, color: "bg-yellow-600" },
+    { name: "Python", level: 75, color: "bg-blue-500" },
+    { name: "Flutter", level: 60, color: "bg-cyan-500" },
+    { name: "C++", level: 50, color: "bg-orange-600" },
   ];
 
   const experiences = () => experienceText().items;
 
   const projects = () => {
-    const p = projectsText().items.map((proj, i) => {
+    const p = projectsText().items.map((proj: any, i: number) => {
       const configs = [
         { image: "/projects/libertywalk.png", tech: ["HTML", "CSS"], demo: "https://lbwk-company-profile.vercel.app/", github: "https://github.com/xiorw/LBWK_CompanyProfile", hasLiveDemo: true },
         { image: "/projects/todolist.jpg", tech: ["HTML", "CSS", "JavaScript"], demo: "https://to-do-list-app-sooty-omega.vercel.app/", github: "https://github.com/xiorw/To-Do-List_App", hasLiveDemo: true },
@@ -515,6 +549,8 @@ const Portfolio = () => {
         { image: "/projects/evolixclothes.png", tech: ["PHP", "Laravel", "Blade", "TailwindCSS", "JavaScript"], demo: "https://evolixclothes-static.vercel.app/", github: "https://github.com/xiorw/evolixclothes", hasLiveDemo: true },
         { image: "/projects/mindmate.png", tech: ["SolidJS", "TypeScript", "TailwindCSS"], demo: "https://mind-mate-fe.vercel.app/", github: "https://github.com/xiorw/MindMate-fe", hasLiveDemo: true },
         { image: "/projects/soulmatch.jpg", tech: ["Kotlin"], demo: "#", github: "https://github.com/xiorw/Soulmatch_MK4B", hasLiveDemo: false },
+        { image: "/projects/cars-vs-tanks.jpg", tech: ["Python", "Google Colab"], demo: "#", colab: "https://colab.research.google.com/drive/1QLjreXaRRLRLCgxNEb_MGpIfWMK6zDgE", hasLiveDemo: false, isColab: true },
+        { image: "/projects/fruits-classification.png", tech: ["Python", "Google Colab"], demo: "#", colab: "https://colab.research.google.com/drive/1A8IUTNQnBmiITG6z6MWRFIgXGtZUKax-", hasLiveDemo: false, isColab: true },
       ];
       return { ...proj, ...configs[i] };
     });
@@ -807,7 +843,7 @@ const Portfolio = () => {
               </p>
 
               <div class="flex flex-wrap gap-3">
-                {aboutText().skills.map((skill) => (
+                {aboutText().skills.map((skill: string) => (
                   <span
                     class={`px-4 py-2 rounded-full text-sm font-medium transition-transform duration-300 hover:scale-110 hover:shadow-md ${
                       darkMode() ? "bg-gray-700 text-gray-300" : "bg-gray-100 text-gray-700"
@@ -830,18 +866,12 @@ const Portfolio = () => {
             <div class="w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto"></div>
           </div>
 
-          <div class="grid md:grid-cols-2 gap-6">
-            {skills.map((skill) => (
+          <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {skills.map((skill, index) => (
               <div
-                class={`p-6 rounded-xl ${darkMode() ? "bg-gray-800" : "bg-white"} shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105`}
+                class={`p-6 rounded-xl ${skill.color} ${activeSkill() === index ? "opacity-100 scale-110" : "opacity-50"} shadow-lg hover:opacity-100 hover:scale-110 hover:shadow-2xl transition-all duration-300 transform flex items-center justify-center cursor-pointer`}
               >
-                <div class="flex items-center justify-between mb-3">
-                  <span class={`font-semibold ${darkMode() ? "text-white" : "text-gray-900"}`}>{skill.name}</span>
-                  <span class={`text-sm ${darkMode() ? "text-gray-400" : "text-gray-600"}`}>{skill.level}%</span>
-                </div>
-                <div class={`w-full bg-gray-200 rounded-full h-2 ${darkMode() ? "bg-gray-700" : ""}`}>
-                  <div class={`h-2 rounded-full transition-all duration-1000 ${skill.color} animate__animated animate__pulse`} style={{ width: `${skill.level}%` }}></div>
-                </div>
+                <span class={`font-semibold text-center text-white`}>{skill.name}</span>
               </div>
             ))}
           </div>
@@ -860,7 +890,7 @@ const Portfolio = () => {
             <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-600 to-purple-600 animate__animated animate__pulse"></div>
 
             <div class="space-y-8">
-              {experiences().map((exp) => (
+              {experiences().map((exp: any) => (
                 <div class="relative flex items-start">
                   <div class="absolute left-6 w-4 h-4 bg-blue-600 rounded-full border-4 border-white dark:border-gray-800 animate-pulse"></div>
                   <div class="ml-16">
@@ -897,7 +927,7 @@ const Portfolio = () => {
           </div>
 
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(showAllProjects() ? projects() : projects().slice(0, 3)).map((project) => (
+            {(showAllProjects() ? projects() : projects().slice(0, 3)).map((project: any) => (
               <div
                 class={`rounded-xl overflow-hidden ${darkMode() ? "bg-gray-800" : "bg-white"} shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300`}
               >
@@ -913,7 +943,7 @@ const Portfolio = () => {
                   <p class={`mb-4 ${darkMode() ? "text-gray-300" : "text-gray-600"}`}>{project.description}</p>
 
                   <div class="flex flex-wrap gap-2 mb-4">
-                    {project.tech.map((tech) => (
+                    {project.tech.map((tech: string) => (
                       <span
                         class={`px-3 py-1 text-xs rounded-full transition-transform duration-300 hover:scale-110 hover:shadow-md ${
                           darkMode() ? "bg-gray-700 text-gray-300" : "bg-gray-100 text-gray-700"
@@ -925,27 +955,53 @@ const Portfolio = () => {
                   </div>
 
                   <div class="flex gap-3">
-                    <button
-                      onClick={() => {
-                        if (project.hasLiveDemo) {
-                          window.location.href = project.demo;
-                        } else {
-                          setPopupMessage(projectsText().noDemo);
-                          setShowPopup(true);
-                        }
-                      }}
-                      class="flex-1 text-center py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"
-                    >
-                      {projectsText().liveDemo}
-                    </button>
-                    <a
-                      href={project.github}
-                      class={`flex-1 text-center py-2 px-4 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-105 ${
-                        darkMode() ? "border-blue-400 text-blue-400 hover:bg-blue-400" : ""
-                      }`}
-                    >
-                      {projectsText().github}
-                    </a>
+                    {project.isColab ? (
+                      <>
+                        <button
+                          onClick={() => {
+                            setPopupMessage(projectsText().noDemo);
+                            setShowPopup(true);
+                          }}
+                          class="flex-1 text-center py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"
+                        >
+                          {projectsText().liveDemo}
+                        </button>
+                        <a
+                          href={project.colab}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class={`flex-1 text-center py-2 px-4 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-105 ${
+                            darkMode() ? "border-blue-400 text-blue-400 hover:bg-blue-400" : ""
+                          }`}
+                        >
+                          View on Colab
+                        </a>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => {
+                            if (project.hasLiveDemo) {
+                              window.location.href = project.demo;
+                            } else {
+                              setPopupMessage(projectsText().noDemo);
+                              setShowPopup(true);
+                            }
+                          }}
+                          class="flex-1 text-center py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"
+                        >
+                          {projectsText().liveDemo}
+                        </button>
+                        <a
+                          href={project.github}
+                          class={`flex-1 text-center py-2 px-4 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-105 ${
+                            darkMode() ? "border-blue-400 text-blue-400 hover:bg-blue-400" : ""
+                          }`}
+                        >
+                          {projectsText().github}
+                        </a>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -976,7 +1032,7 @@ const Portfolio = () => {
           </div>
 
           <div class="space-y-12">
-            {workExperienceText().items.map((work) => (
+            {workExperienceText().items.map((work: any) => (
               <div
                 class={`rounded-xl overflow-hidden ${darkMode() ? "bg-gray-800" : "bg-white"} shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300`}
               >
@@ -1005,7 +1061,7 @@ const Portfolio = () => {
                       <p class={`text-sm font-semibold mb-3 ${darkMode() ? "text-gray-400" : "text-gray-700"}`}>Dokumentasi</p>
                       <div class="grid grid-cols-2 gap-3">
                         {Array.isArray(work.documentation) ? (
-                          work.documentation.map((doc, index) => (
+                          work.documentation.map((doc: string, index: number) => (
                             <div
                               class={`aspect-video rounded-lg bg-gradient-to-br ${
                                 darkMode() ? "from-gray-700 to-gray-600" : "from-gray-200 to-gray-100"
@@ -1045,7 +1101,7 @@ const Portfolio = () => {
                       <p class={`text-sm font-semibold mb-3 ${darkMode() ? "text-gray-400" : "text-gray-700"}`}>Sertifikat</p>
                       <div class="flex flex-col sm:flex-row gap-3">
                         {Array.isArray(work.certificate) ? (
-                          work.certificate.map((cert, index) => (
+                          work.certificate.map((cert: string, index: number) => (
                             <div
                               class={`flex-1 aspect-[1.41/1] rounded-lg bg-gradient-to-br ${
                                 darkMode() ? "from-gray-700 to-gray-600" : "from-gray-200 to-gray-100"
